@@ -1,0 +1,32 @@
+name: Node.js CI
+
+# Indique à GitHub quand lancer ce workflow
+on:
+  push:
+    branches: [ "main" ] # Se déclenche lors d'un push sur la branche main
+  pull_request:
+    branches: [ "main" ] # Se déclenche lors d'une pull request vers main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest # Utilise un environnement Linux virtuel
+
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x, 22.x] # Teste sur plusieurs versions de Node.js
+
+    steps:
+    - name: Récupérer le code du dépôt
+      uses: actions/checkout@v4
+
+    - name: Configurer Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm' # Met en cache les dépendances npm pour accélérer les futurs builds
+
+    - name: Installer les dépendances
+      run: npm install
+
+    - name: Lancer les tests
+      run: npm test
